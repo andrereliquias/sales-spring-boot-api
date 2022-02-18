@@ -2,6 +2,7 @@ package br.com.andrereliquias;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,7 +36,8 @@ public class VendasApplication
         return applicationName;
     }
 
-    @Autowired // Aqui eu estou fazendo uma injeção de dependência, no caso vou injetar uma bean de configuração
-    @Qualifier("applicationName") // Essa anotation eu evito ambiguidade quando o spring encontrar multiplos beans com o mesmo tipo
+    // @Autowired // Aqui eu estou fazendo uma injeção de dependência, no caso vou injetar uma bean de configuração
+    // @Qualifier("applicationName") // Essa anotation eu evito ambiguidade quando o spring encontrar multiplos beans com o mesmo tipo
+    @Value("${application.name}") // Aqui eu estou pegando a configuracao do resources/application
     private String applicationName;
 }
