@@ -1,12 +1,10 @@
 package br.com.andrereliquias.api.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,12 +12,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import br.com.andrereliquias.domain.entity.Cliente;
 import br.com.andrereliquias.domain.repository.Clientes;
 
-@Controller
+@RestController
 @RequestMapping("/api/clientes")
 public class ClienteController {
 
@@ -32,74 +32,66 @@ public class ClienteController {
   }
 
   @GetMapping("/{id}")
-  @ResponseBody
-  public ResponseEntity getClienteById( @PathVariable Integer id ) {
-    
-    // Instancia de option quer dizer que pode existir ou não um cliente,  eh retornado pelo findById
-    Optional<Cliente> cliente = clientes.findById(id);
+  public Cliente getClienteById(@PathVariable Integer id) {
 
-    if(cliente.isPresent()) {
-      return ResponseEntity.ok( cliente.get() );
-    }
+    // Instancia de option quer dizer que pode existir ou não um cliente, eh
+    // retornado pelo findById
+    // Optional<Cliente> cliente = clientes.findById(id);
 
-    return ResponseEntity.notFound().build();
+    return clientes
+        .findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado"));
+
   }
 
   @PostMapping
-  @ResponseBody
-  public ResponseEntity save( @RequestBody Cliente cliente ) {
-    
-    Cliente clienteSalvo = clientes.save(cliente);  
-    
-    return ResponseEntity.ok(clienteSalvo);
-  
+  @ResponseStatus(HttpStatus.CREATED)
+  public Cliente save(@RequestBody Cliente cliente) {
+
+    return clientes.save(cliente);
   }
 
   @DeleteMapping("/{id}")
-  @ResponseBody
-  public ResponseEntity delete( @PathVariable Integer id ) {
-    
-    // Instancia de option quer dizer que pode existir ou não um cliente,  eh retornado pelo findById
-    Optional<Cliente> cliente = clientes.findById(id);
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void delete(@PathVariable Integer id) {
 
-    if(cliente.isPresent()) {
-      clientes.delete(cliente.get());
+    clientes
+        .findById(id)
+        .map(cliente -> {
+          clientes.delete(cliente);
 
-      return ResponseEntity.noContent().build();
-    }
+          return cliente;
+        })
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado"));
 
-    return ResponseEntity.notFound().build();
   }
 
   @PutMapping("/{id}")
-  @ResponseBody
-  public ResponseEntity update( @PathVariable Integer id, @RequestBody Cliente cliente ) {
-    
-    return clientes
-            .findById(id)
-            .map(clienteExistente -> {
-              cliente.setId(clienteExistente.getId());
-              clientes.save(cliente);
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void update(@PathVariable Integer id, @RequestBody Cliente cliente) {
 
-              return ResponseEntity.noContent().build();
-            }).orElseGet(() -> ResponseEntity.notFound().build());
+    clientes
+        .findById(id)
+        .map(clienteExistente -> {
+          cliente.setId(clienteExistente.getId());
+          clientes.save(cliente);
+
+          return clienteExistente;
+        }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado"));
 
   }
 
   @GetMapping
-  @ResponseBody
-  public ResponseEntity find( Cliente filtro ) {
+  public List<Cliente> find(Cliente filtro) {
 
     ExampleMatcher matcher = ExampleMatcher
-                              .matching()
-                              .withIgnoreCase()
-                              .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+        .matching()
+        .withIgnoreCase()
+        .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
 
     Example example = Example.of(filtro, matcher);
 
-    List<Cliente> lista = clientes.findAll(example);
-
-    return ResponseEntity.ok(lista);
+    return clientes.findAll(example);
   }
 
 }
