@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity // Não é necessario utilizar a anaotation @table pois o nome da Entidade é o mesmo nome da tabela
 @Table(name = "cliente")
 public class Cliente {
@@ -22,6 +24,18 @@ public class Cliente {
     @Column(name = "nome", length = 100)
     private String nome;
 
+    @Column(length = 11)
+    private String cpf;
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
+    @JsonIgnore // diz para o parser ignorar essa propiedade no meu json quando eu fazer um get
     @OneToMany(mappedBy = "cliente")
     private Set<Pedido> pedidos;
 
