@@ -1,6 +1,9 @@
 /Users/andrereliquias/estudos/java/vendas/src/main/java/br/com/andrereliquias/domain/entity/Cliente.java
+/Users/andrereliquias/estudos/java/vendas/src/main/java/br/com/andrereliquias/domain/repository/ItemsPedido.java
 /Users/andrereliquias/estudos/java/vendas/src/main/java/br/com/andrereliquias/domain/entity/Produto.java
 /Users/andrereliquias/estudos/java/vendas/src/main/java/br/com/andrereliquias/domain/entity/ItemPedido.java
 /Users/andrereliquias/estudos/java/vendas/src/main/java/br/com/andrereliquias/domain/entity/Pedido.java
-/Users/andrereliquias/estudos/java/vendas/src/main/java/br/com/andrereliquias/domain/repositorio/Clientes.java
+/Users/andrereliquias/estudos/java/vendas/src/main/java/br/com/andrereliquias/domain/repository/Pedidos.java
+/Users/andrereliquias/estudos/java/vendas/src/main/java/br/com/andrereliquias/domain/repository/Clientes.java
+/Users/andrereliquias/estudos/java/vendas/src/main/java/br/com/andrereliquias/domain/repository/Produtos.java
 /Users/andrereliquias/estudos/java/vendas/src/main/java/br/com/andrereliquias/VendasApplication.java
