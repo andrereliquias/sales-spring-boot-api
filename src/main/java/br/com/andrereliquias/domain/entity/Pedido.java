@@ -2,6 +2,7 @@ package br.com.andrereliquias.domain.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -14,6 +15,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data // Pacote lombok
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "pedido")
 public class Pedido {
@@ -36,52 +44,59 @@ public class Pedido {
     private List<ItemPedido> itens; 
 
     public List<ItemPedido> getItens() {
+        if (this.itens == null) {
+            this.itens = new ArrayList<>();
+        }
         return itens;
     }
 
-    public void setItens(List<ItemPedido> itens) {
-        this.itens = itens;
-    }
+    // public List<ItemPedido> getItens() {
+    //     return itens;
+    // }
 
-    public Integer getId() {
-        return id;
-    }
-    
-    public BigDecimal getTotal() {
-        return total;
-    }
-    
-    public void setTotal(BigDecimal total) {
-        this.total = total;
-    }
-    
-    public LocalDate getDataPedido() {
-        return dataPedido;
-    }
-    
-    public void setDataPedido(LocalDate dataPedido) {
-        this.dataPedido = dataPedido;
-    }
-    
-    public Cliente getCliente() {
-        return cliente;
-    }
-    
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
-    }
-    
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    // public void setItens(List<ItemPedido> itens) {
+    //     this.itens = itens;
+    // }
 
-    @Override
-    public String toString() {
-        return "Pedido(" +
-                "id=" + id + 
-                ", dataPedido=" + dataPedido +
-                ", total=" + total +
-                ")";
-    }
+    // public Integer getId() {
+    //     return id;
+    // }
+    
+    // public BigDecimal getTotal() {
+    //     return total;
+    // }
+    
+    // public void setTotal(BigDecimal total) {
+    //     this.total = total;
+    // }
+    
+    // public LocalDate getDataPedido() {
+    //     return dataPedido;
+    // }
+    
+    // public void setDataPedido(LocalDate dataPedido) {
+    //     this.dataPedido = dataPedido;
+    // }
+    
+    // public Cliente getCliente() {
+    //     return cliente;
+    // }
+    
+    // public void setCliente(Cliente cliente) {
+    //     this.cliente = cliente;
+    // }
+    
+    // public void setId(Integer id) {
+    //     this.id = id;
+    // }
+
+    // @Override
+    // public String toString() {
+    //     return "Pedido(" +
+    //             "id=" + id + 
+    //             ", dataPedido=" + dataPedido +
+    //             ", total=" + total +
+    //             ")";
+    // }
 
 }
