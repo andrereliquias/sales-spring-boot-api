@@ -2,6 +2,7 @@ package br.com.andrereliquias.service.impl;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -15,7 +16,7 @@ import br.com.andrereliquias.domain.entity.ItemPedido;
 import br.com.andrereliquias.domain.entity.Pedido;
 import br.com.andrereliquias.domain.entity.Produto;
 import br.com.andrereliquias.domain.repository.Clientes;
-import br.com.andrereliquias.domain.repository.ItemsPedido;
+import br.com.andrereliquias.domain.repository.ItensPedido;
 import br.com.andrereliquias.domain.repository.Pedidos;
 import br.com.andrereliquias.domain.repository.Produtos;
 import br.com.andrereliquias.exception.RegraNegocioException;
@@ -31,7 +32,7 @@ public class PedidoServiceImpl implements PedidoService {
   private final Pedidos repository;
   private final Clientes clientesRepository;
   private final Produtos produtosRepository;
-  private final ItemsPedido itemsPedidoRepository;
+  private final ItensPedido itensPedidoRepository;
 
   @Override
   @Transactional // garante que ou ele salva tudo ou não salva nada
@@ -47,26 +48,30 @@ public class PedidoServiceImpl implements PedidoService {
     pedido.setCliente(cliente);
 
 
-    List<ItemPedido> itemsPedido = converterItems(pedido, dto.getItems());
+    List<ItemPedido> itensPedido = converterItens(pedido, dto.getItens());
     repository.save(pedido);
 
-    itemsPedidoRepository.saveAll(itemsPedido);
+    itensPedidoRepository.saveAll(itensPedido);
 
     // TODO Auto-generated method stub
     // return null;
     
-    pedido.setItens(itemsPedido);
+    pedido.setItens(itensPedido);
 
     return pedido;
   }
 
+  @Override
+  public Optional<Pedido> obterPedidoCompleto(Integer id) {
+    return repository.findByIdFetchItens(id);
+  }
 
-  private List<ItemPedido> converterItems(Pedido pedido, List<ItemPedidoDTO> items) {
-    if (items.isEmpty()) {
-      throw new RegraNegocioException("Não é possível realizar um pedido sem items.");
+  private List<ItemPedido> converterItens(Pedido pedido, List<ItemPedidoDTO> itens) {
+    if (itens == null ||  itens.isEmpty()) {
+      throw new RegraNegocioException("Não é possível realizar um pedido sem itens.");
     }
 
-    return items
+    return itens
       .stream()
       .map(dto -> {
         Integer idProduto = dto.getProduto();
