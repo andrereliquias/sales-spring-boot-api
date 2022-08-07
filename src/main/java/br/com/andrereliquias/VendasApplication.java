@@ -13,13 +13,13 @@ import br.com.andrereliquias.domain.repository.Clientes;
 public class VendasApplication 
 {
 
-    @Bean
-    public  CommandLineRunner commandLineRunner(@Autowired Clientes clientes) {
-        return args -> {
-            Cliente c = new Cliente(null, "Fulano");
-            clientes.save(c);
-        };
-    }
+    // @Bean
+    // public  CommandLineRunner commandLineRunner(@Autowired Clientes clientes) {
+    //     return args -> {
+    //         Cliente c = new Cliente(null, "Fulano");
+    //         clientes.save(c);
+    //     };
+    // }
 
     public static void main( String[] args )
     {
