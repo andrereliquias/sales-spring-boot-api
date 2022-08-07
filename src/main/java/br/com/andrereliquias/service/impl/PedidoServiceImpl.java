@@ -15,10 +15,12 @@ import br.com.andrereliquias.domain.entity.Cliente;
 import br.com.andrereliquias.domain.entity.ItemPedido;
 import br.com.andrereliquias.domain.entity.Pedido;
 import br.com.andrereliquias.domain.entity.Produto;
+import br.com.andrereliquias.domain.enums.StatusPedido;
 import br.com.andrereliquias.domain.repository.Clientes;
 import br.com.andrereliquias.domain.repository.ItensPedido;
 import br.com.andrereliquias.domain.repository.Pedidos;
 import br.com.andrereliquias.domain.repository.Produtos;
+import br.com.andrereliquias.exception.PedidoNaoEncontradoException;
 import br.com.andrereliquias.exception.RegraNegocioException;
 import br.com.andrereliquias.service.PedidoService;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +48,7 @@ public class PedidoServiceImpl implements PedidoService {
     pedido.setTotal(dto.getTotal());
     pedido.setDataPedido(LocalDate.now());
     pedido.setCliente(cliente);
-
+    pedido.setStatus(StatusPedido.REALIZADO);
 
     List<ItemPedido> itensPedido = converterItens(pedido, dto.getItens());
     repository.save(pedido);
@@ -64,6 +66,18 @@ public class PedidoServiceImpl implements PedidoService {
   @Override
   public Optional<Pedido> obterPedidoCompleto(Integer id) {
     return repository.findByIdFetchItens(id);
+  }
+
+  @Override
+  @Transactional
+  public void atutalizaStatus(Integer id, StatusPedido statusPedido) {
+    // NAO E BOA PRATICA USAR A CAMADA DE SERVICO PARA LANCAR EXCESSOES DE API REST
+      repository
+              .findById(id)
+              .map( pedido -> {
+                pedido.setStatus(statusPedido);
+                return repository.save(pedido);
+              }).orElseThrow(() -> new PedidoNaoEncontradoException());
   }
 
   private List<ItemPedido> converterItens(Pedido pedido, List<ItemPedidoDTO> itens) {

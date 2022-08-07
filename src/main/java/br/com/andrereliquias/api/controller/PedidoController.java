@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,11 +17,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import br.com.andrereliquias.api.dto.AtualizacaoStatusPedidoDTO;
 import br.com.andrereliquias.api.dto.InformacaoItemPedidoDTO;
 import br.com.andrereliquias.api.dto.InformacoesPedidoDTO;
 import br.com.andrereliquias.api.dto.PedidoDTO;
 import br.com.andrereliquias.domain.entity.ItemPedido;
 import br.com.andrereliquias.domain.entity.Pedido;
+import br.com.andrereliquias.domain.enums.StatusPedido;
 import br.com.andrereliquias.service.PedidoService;
 
 @RestController
@@ -50,6 +53,14 @@ public class PedidoController {
                           new ResponseStatusException(HttpStatus.NOT_FOUND, "Pedido nao encontrado"));
   }
 
+  @PatchMapping("{id}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void updateStatus(@PathVariable Integer id, @RequestBody AtualizacaoStatusPedidoDTO dto) {
+    
+    String novoStatus = dto.getNovoStatus();
+    service.atutalizaStatus(id, StatusPedido.valueOf(novoStatus));
+  }
+
   private InformacoesPedidoDTO converter(Pedido pedido) {
     return InformacoesPedidoDTO
               .builder().codigo(pedido.getId())
@@ -57,6 +68,7 @@ public class PedidoController {
               .cpf(pedido.getCliente().getCpf())
               .nomeCliente(pedido.getCliente().getNome())
               .total(pedido.getTotal())
+              .status(pedido.getStatus().name())
               .Itens(converter(pedido.getItens()))
               .build();
   }
